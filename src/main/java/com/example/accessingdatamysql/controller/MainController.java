@@ -1,15 +1,14 @@
 package com.example.accessingdatamysql.controller;
 
-import java.util.Optional;
-
-import javax.persistence.Id;
-
+import com.example.accessingdatamysql.dtos.Dto;
 import com.example.accessingdatamysql.models.User;
 import com.example.accessingdatamysql.repositories.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -22,6 +21,7 @@ public class MainController {
   private UserRepository userRepository;
 
   //CREATE
+  // http://localhost:8080/demo/add?name=Jucelino&email=jucelino@email.com
   @GetMapping(path = "/add")
   public @ResponseBody String add(@RequestParam String name, @RequestParam String email) {
     User n = new User();
@@ -29,6 +29,18 @@ public class MainController {
     n.setEmail(email);
     userRepository.save(n);
     return "Add";
+  }
+  
+
+  // curl -H "Content-Type: application/json" -X POST -d '{"name":"myName","email":"my@email"}' http://localhost:8080/demo/save
+  @PostMapping(path = "/save")
+  public @ResponseBody String save(@RequestBody Dto dto) {
+
+    User n = new User();
+    n.setName(dto.getName());
+    n.setEmail(dto.getEmail());
+    userRepository.save(n);
+    return "Saved\n";
   }
 
   //UPDATE
