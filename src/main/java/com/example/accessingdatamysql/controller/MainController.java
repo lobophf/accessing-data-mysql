@@ -4,6 +4,7 @@ import com.example.accessingdatamysql.dtos.Dto;
 import com.example.accessingdatamysql.models.User;
 import com.example.accessingdatamysql.repositories.UserRepository;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,25 +36,27 @@ public class MainController {
   // curl -H "Content-Type: application/json" -X POST -d '{"name":"myName","email":"my@email"}' http://localhost:8080/demo/save
   @PostMapping(path = "/save")
   public @ResponseBody String save(@RequestBody Dto dto) {
-
-    User n = new User();
-    n.setName(dto.getName());
-    n.setEmail(dto.getEmail());
-    userRepository.save(n);
+    
+    User user = new User();
+    BeanUtils.copyProperties(dto, user);
+    userRepository.save(user);
     return "Saved\n";
   }
 
   //UPDATE
   @GetMapping(path = "/update")
-  public @ResponseBody String update(@RequestParam String id, @RequestParam String name, @RequestParam String email) {
+  public @ResponseBody String update(@RequestParam int id, @RequestParam String name, @RequestParam String email) {
+    
+    User newUser = new User();
+    newUser.setName(name);
+    newUser.setEmail(email);
 
-    userRepository.deleteById(Integer.valueOf(id));
-
-    User n = new User();
-    n.setName(name);
-    n.setEmail(email);
-    userRepository.save(n);
-
+    userRepository.findById(id)
+    .map(u -> {
+      u.setName(newUser.getName());
+      u.setEmail(newUser.getEmail());
+      return userRepository.save(u);
+    });
     return "update";
   }
 
