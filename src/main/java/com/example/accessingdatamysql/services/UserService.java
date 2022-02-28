@@ -1,6 +1,9 @@
 package com.example.accessingdatamysql.services;
 
+import java.util.Objects;
 import java.util.Optional;
+
+import javax.transaction.Transactional;
 
 import com.example.accessingdatamysql.models.User;
 import com.example.accessingdatamysql.repositories.UserRepository;
@@ -10,32 +13,43 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
-	
-	@Autowired
-	private UserRepository userRepository;
 
-	public Iterable<User> getAllUsers() {
-		return userRepository.findAll();
-	}
+  @Autowired
+  private UserRepository userRepository;
 
-	public Optional<User> getUser(int id) {
-		return userRepository.findById(id);
-	}
+  public Iterable<User> getAllUsers() {
+    return userRepository.findAll();
+  }
 
-	public void deleteUser(int id) {
-		userRepository.deleteById(id);
-	}
+  public Optional<User> getUser(int id) {
+    return userRepository.findById(id);
+  }
 
-	public void add(User user) {
-		userRepository.save(user);
-	}
+  @Transactional
+  public void deleteUser(int id) {
+    userRepository.deleteById(id);
+  }
 
-	public void update(User user, int id) {
-		userRepository.findById(id)
-		    .map(newUser -> {
-		      newUser.setName(user.getName());
-		      newUser.setEmail(user.getEmail());
-		      return userRepository.save(newUser);
-		    });
-	}
+  @Transactional
+  public User add(User user) {
+    return userRepository.save(user);
+  }
+
+  @Transactional
+  public Optional<User> update(User user, int id) {
+    return userRepository.findById(id)
+        .map(newUser -> {
+          newUser.setName(user.getName());
+          newUser.setEmail(user.getEmail());
+          return userRepository.save(newUser);
+        });
+  }
+
+  public boolean exitsByEmail(String email) {
+    return userRepository.existsByEmail(email);
+  }
+
+  public Boolean exitsUserById(int id){
+	  return userRepository.existsById(id);
+  }
 }

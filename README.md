@@ -15,12 +15,12 @@ To execute the CRUD operations, use the commands below.
 
 #### Create:
 ```
-curl -H "Content-Type: application/json" -X POST -d '{"name":"myName","email":"my@email"}' http://localhost:8080/demo/save
+curl -H "Content-Type: application/json" -X POST -d '{"name":"myName","email":"my@email"}' http://localhost:8080/demo
 ```
 
 #### Read
 ```
-curl  http://localhost:8080/demo/all -s | json_pp
+curl  http://localhost:8080/demo -s | json_pp
 curl  http://localhost:8080/demo/16 -s | json_pp
 ```
 
