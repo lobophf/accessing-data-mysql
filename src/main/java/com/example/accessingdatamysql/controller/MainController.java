@@ -35,7 +35,7 @@ public class MainController {
     BeanUtils.copyProperties(dto, user);
 
     if(userService.exitsByEmail(user.getEmail())){
-      return ResponseEntity.status(HttpStatus.CONFLICT).body("Conflict: This email is already exists.");
+      return ResponseEntity.status(HttpStatus.CONFLICT).body("Conflict: This email already exists.");
     }
 
     return ResponseEntity.status(HttpStatus.CREATED).body(userService.add(user));
