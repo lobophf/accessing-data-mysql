@@ -1,7 +1,5 @@
 package com.example.accessingdatamysql.controller;
 
-import java.util.Optional;
-
 import javax.validation.Valid;
 
 import com.example.accessingdatamysql.dtos.Dto;
@@ -34,7 +32,7 @@ public class MainController {
     User user = new User();
     BeanUtils.copyProperties(dto, user);
 
-    if(userService.exitsByEmail(user.getEmail())){
+    if(userService.existsByEmail(user.getEmail())){
       return ResponseEntity.status(HttpStatus.CONFLICT).body("Conflict: This email already exists.");
     }
 
@@ -42,23 +40,31 @@ public class MainController {
   }
 
   @GetMapping
-  public @ResponseBody ResponseEntity<Iterable<User>> getAllUsers() {
+  public @ResponseBody ResponseEntity<Object> getAllUsers() {
+
+    if(!userService.existsUsers()){
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Users not found.");
+    }
     return ResponseEntity.status(HttpStatus.OK).body(userService.getAllUsers());
   }
 
   @GetMapping(path = "/{id}")
-  public @ResponseBody ResponseEntity<Optional<User>> get(@PathVariable(value = "id") int id) {
+  public @ResponseBody ResponseEntity<Object> get(@PathVariable(value = "id") int id) {
+    if(!userService.existsUserById(id)){
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("This id doesn't exist.");
+    }
+
     return ResponseEntity.status(HttpStatus.OK).body(userService.getUser(id));
   }
 
   @PutMapping(path = "/{id}")
   public @ResponseBody ResponseEntity<Object> replace(@RequestBody @Valid Dto dto, @PathVariable(value = "id") int id) {
 
-    if(!userService.exitsByEmail(dto.getEmail())){
+    if(!userService.existsByEmail(dto.getEmail())){
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body("This email doesn't exist.");
     }
 
-    if(!userService.exitsUserById(id)){
+    if(!userService.existsUserById(id)){
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body("This id doesn't exist.");
     }
 
@@ -72,7 +78,7 @@ public class MainController {
   @DeleteMapping(path = "/{id}")
   public @ResponseBody ResponseEntity<String> remove(@PathVariable(value = "id") int id) {
 
-    if(!userService.exitsUserById(id)){
+    if(!userService.existsUserById(id)){
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body("This id doesn't exist.");
     }
 

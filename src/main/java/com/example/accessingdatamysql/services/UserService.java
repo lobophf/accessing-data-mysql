@@ -1,6 +1,5 @@
 package com.example.accessingdatamysql.services;
 
-import java.util.Objects;
 import java.util.Optional;
 
 import javax.transaction.Transactional;
@@ -45,11 +44,15 @@ public class UserService {
         });
   }
 
-  public boolean exitsByEmail(String email) {
+  public boolean existsByEmail(String email) {
     return userRepository.existsByEmail(email);
   }
 
-  public Boolean exitsUserById(int id){
-	  return userRepository.existsById(id);
+  public boolean existsUserById(int id) {
+    return userRepository.existsById(id);
+  }
+
+  public boolean existsUsers() {
+    return userRepository.count() > 0 ? true : false;
   }
 }
